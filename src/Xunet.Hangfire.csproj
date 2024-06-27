@@ -8,7 +8,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<!-- version numbers will be updated by build -->
-		<Version>1.8.12</Version>
+		<Version>1.8.13</Version>
 		<TotalDays>$([System.DateTime]::Now.Date.Subtract($([System.DateTime]::Parse($([System.String]::Format("{0}-1-1",2024))))).TotalDays)</TotalDays>
 		<AssemblyVersion>$(Version).$(TotalDays)</AssemblyVersion>
 		<FileVersion>$(Version).$(TotalDays)</FileVersion>
