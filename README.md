@@ -9,15 +9,15 @@ Support .NET 6.0/7.0/8.0
 [![License](https://img.shields.io/github/license/shelley-xl/Xunet.Hangfire.svg)](https://github.com/shelley-xl/Xunet.Hangfire/blob/master/LICENSE)
 ![Vistors](https://visitor-badge.laobi.icu/badge?page_id=https://github.com/shelley-xl/Xunet.Hangfire)
 
-## °²×°
+## å®‰è£…
 
-Ê¹ÓÃNuGet Package ¿ØÖÆÌ¨´°¿Ú°²×°Ëü£º
+ä½¿ç”¨NuGet Package æ§åˆ¶å°çª—å£å®‰è£…å®ƒï¼š
 
 ```
 PM> Install-Package Xunet.Hangfire
 ```
 
-## Ê¹ÓÃ
+## ä½¿ç”¨
 
 Program.cs
 
@@ -58,7 +58,7 @@ var app = builder.Build();
 app.MapHangfireDashboard(string.Empty, new DashboardOptions
 {
     IsReadOnlyFunc = _ => false,
-    DashboardTitle = "¶¨Ê±ÈÎÎñ"
+    DashboardTitle = "å®šæ—¶ä»»åŠ¡"
 });
 
 app.Run();
