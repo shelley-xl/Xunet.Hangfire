@@ -13,7 +13,7 @@ namespace Hangfire.RecurringJobAdmin.Pages
 
         static JobsStoppedPage()
         {
-            PageHtml = Utility.ReadStringResource("Xufire.Hangfire.RecurringJobAdmin.Dashboard.JobsStopped.html");
+            PageHtml = Utility.ReadStringResource($"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.JobsStopped.html");
         }
 
         public override void Execute()

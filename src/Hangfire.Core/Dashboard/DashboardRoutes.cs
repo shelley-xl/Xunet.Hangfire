@@ -220,7 +220,7 @@ namespace Hangfire.Dashboard
         internal static string GetContentFolderNamespace(string contentFolder)
         {
             //return $"{typeof(DashboardRoutes).Namespace}.Content.{contentFolder}";
-            return $"Xufire.Hangfire.Core.Dashboard.Content.{contentFolder}";
+            return $"{AppConfig.AppName}.Hangfire.Core.Dashboard.Content.{contentFolder}";
         }
 
         internal static string GetContentResourceName(string contentFolder, string resourceName)

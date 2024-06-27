@@ -17,7 +17,7 @@ namespace Hangfire.RecurringJobAdmin.Pages
 
         static JobExtensionPage()
         {
-            PageHtml = Utility.ReadStringResource("Xufire.Hangfire.RecurringJobAdmin.Dashboard.JobExtension.html");
+            PageHtml = Utility.ReadStringResource($"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.JobExtension.html");
         }
 
         public override void Execute()

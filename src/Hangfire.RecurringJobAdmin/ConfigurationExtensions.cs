@@ -99,16 +99,16 @@ namespace Hangfire.RecurringJobAdmin
                 Metric = TagDashboardMetrics.JobsAllCount
             });
 
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/css/jobExtension", "text/css", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.css.JobExtension.css");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/css/cron-expression-input", "text/css", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.css.cron-expression-input.css");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/page", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.jobextension.js");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/vue", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.vue.js");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/axio", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.axios.min.js");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/daysjs", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.daysjs.min.js");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/relativeTime", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.relativeTime.min.js");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/vuejsPaginate", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.vuejs-paginate.js");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/sweetalert", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.sweetalert.js");
-            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/cron-expression-input", "application/javascript", "Xufire.Hangfire.RecurringJobAdmin.Dashboard.Content.js.cron-expression-input.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/css/jobExtension", "text/css", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.css.JobExtension.css");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/css/cron-expression-input", "text/css", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.css.cron-expression-input.css");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/page", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.jobextension.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/vue", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.vue.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/axio", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.axios.min.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/daysjs", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.daysjs.min.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/relativeTime", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.relativeTime.min.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/vuejsPaginate", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.vuejs-paginate.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/sweetalert", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.sweetalert.js");
+            AddDashboardRouteToEmbeddedResource("/JobConfiguration/js/cron-expression-input", "application/javascript", $"{AppConfig.AppName}.Hangfire.RecurringJobAdmin.Dashboard.Content.js.cron-expression-input.js");
         }
 
         private static void AddDashboardRouteToEmbeddedResource(string route, string contentType, string resourceName)

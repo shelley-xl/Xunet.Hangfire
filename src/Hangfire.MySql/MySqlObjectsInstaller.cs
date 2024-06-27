@@ -24,7 +24,7 @@ namespace Hangfire.MySql
 
             Log.Info("Start installing Hangfire SQL objects...");
 
-            var script = GetStringResource("Xufire.Hangfire.MySql.Install.sql");
+            var script = GetStringResource($"{AppConfig.AppName}.Hangfire.MySql.Install.sql");
             var formattedScript = GetFormattedScript(script, prefix);
 
             connection.Execute(formattedScript);

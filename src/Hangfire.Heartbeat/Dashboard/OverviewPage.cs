@@ -16,7 +16,7 @@ namespace Hangfire.Heartbeat.Dashboard
 
         static OverviewPage()
         {
-            PageHtml = Utils.ReadStringResource("Xufire.Hangfire.Heartbeat.Dashboard.html.OverviewPage.html");
+            PageHtml = Utils.ReadStringResource($"{AppConfig.AppName}.Hangfire.Heartbeat.Dashboard.html.OverviewPage.html");
         }
 
         public OverviewPage(HeartbeatDashboardOptions dashboardOptions)
