@@ -13,15 +13,15 @@ Support .NET 6.0/7.0/8.0
 
 你可以使用NuGet Package Console窗口安装它：
 
-```shell
+```
 PM> Install-Package Hangfire
 ```
 
 ## 使用
 
-```c#
-// Program.cs
+Program.cs
 
+```c#
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -64,9 +64,9 @@ app.MapHangfireDashboard(string.Empty, new DashboardOptions
 app.Run();
 ```
 
-```json
-// appsettings.json
+appsettings.json
 
+```json
 {
   "Logging": {
     "LogLevel": {
