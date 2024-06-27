@@ -29,8 +29,8 @@ namespace Hangfire
 
         public DashboardOptions()
         {
-            AppPath = "/";
-            LogoutPath = "/logout";
+            AppPath = null;
+            LogoutPath = null;
             PrefixPath = string.Empty;
             _asyncAuthorization =
 #if NET451

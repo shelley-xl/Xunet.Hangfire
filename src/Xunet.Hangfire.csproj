@@ -8,7 +8,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<!-- version numbers will be updated by build -->
-		<Version>1.8.12.1</Version>
+		<VersionNumber>2</VersionNumber>
+		<VersionMain>1.8.12</VersionMain>
+		<Version>$(VersionMain).$(VersionNumber)</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
 		<Authors>徐来</Authors>
