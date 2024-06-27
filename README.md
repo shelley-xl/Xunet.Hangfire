@@ -11,10 +11,10 @@ Support .NET 6.0/7.0/8.0
 
 ## 安装
 
-你可以使用NuGet Package Console窗口安装它：
+使用NuGet Package
 
 ```
-PM> Install-Package Hangfire
+PM> Install-Package Xunet.Hangfire
 ```
 
 ## 使用
