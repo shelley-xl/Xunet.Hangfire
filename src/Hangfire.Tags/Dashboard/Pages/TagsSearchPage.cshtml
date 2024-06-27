@@ -1,0 +1,87 @@
+﻿@* Generator: Template TypeVisibility: Internal GeneratePrettyNames: True *@
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@using Hangfire.Tags.Dashboard.Monitoring;
+@using Hangfire.Dashboard;
+@using Hangfire.Dashboard.Pages
+@using Hangfire.Tags.Storage
+@using Hangfire.Tags;
+@using Hangfire.Tags.Dashboard 
+@inherits TagsRazorPage
+@{
+    Layout = new LayoutPage("Tags");
+
+    var tagsListStyle = Options.TagsListStyle;
+
+    List<TagDto> allTags;
+
+    using (var tagStorage = new TagsStorage(Storage))
+    {
+        var monitor = tagStorage.GetMonitoringApi();
+
+        // Show a page with all tags
+        allTags = monitor.SearchWeightedTags().ToList();
+    }
+}
+<script>
+        function go(tag) {
+            var baseUrl = "@Url.To("/tags/search/")";
+            window.location = baseUrl + tag;
+        }
+</script>
+<div class="row">
+    <div class="col-md-3">
+        @Html.JobsSidebar()
+    </div>
+    <div class="col-md-9">
+
+        <h1 class="page-header">标签</h1>
+
+        @{
+
+            if (!allTags.Any())
+            {
+                <div class="alert alert-warning">
+                    暂无标签，尝试添加作业到队列或者执行作业
+                </div>
+            }
+            else
+            {
+                <div class="tags row">
+
+                    @if (tagsListStyle == TagsListStyle.LinkButton)
+                    {
+                        foreach (var t in allTags)
+                        {
+                            var intValue = (int)Math.Round(t.Percentage);
+                            <a href="@Url.To("/tags/search/" + t.Tag)" rel="@intValue">@t.Tag</a>
+                        }
+                    }
+                    else if (tagsListStyle == TagsListStyle.Dropdown)
+                    {
+                        <div class="col-md-12">
+                            <datalist id="hangfireTagsList">
+                                @foreach (var t in allTags)
+                                {
+                                    <option value="@t.Tag"></option>
+                                }
+                            </datalist>
+                            <div class="col-md-10">
+                                <input class="form-control" id="selectedTag" list="hangfireTagsList" autocomplete="off" placeholder="Select a tag" />
+                            </div>
+                            <div class="col-md-2">
+                                <button id="btn_go" class="btn" onclick="go(document.getElementById('selectedTag').value)">Go</button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <b>Not supported Tags List Style. Check TagsOptions</b>
+                    }
+                </div>
+            }
+
+        }
+    </div>
+</div>

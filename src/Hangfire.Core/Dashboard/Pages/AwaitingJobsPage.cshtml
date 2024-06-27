@@ -1,0 +1,232 @@
+﻿@* Generator: Template TypeVisibility: Internal GeneratePrettyNames: true *@
+@using System
+@using System.Collections.Generic
+@using Hangfire
+@using Hangfire.Common;
+@using Hangfire.Dashboard
+@using Hangfire.Dashboard.Pages
+@using Hangfire.Dashboard.Resources
+@using Hangfire.States
+@using Hangfire.Storage
+@using Hangfire.Storage.Monitoring;
+@inherits RazorPage
+@{
+    Layout = new LayoutPage(Strings.AwaitingJobsPage_Title);
+
+    int from, perPage;
+
+    int.TryParse(Query("from"), out from);
+    int.TryParse(Query("count"), out perPage);
+
+    List<string> jobIds = null;
+    Pager pager = null;
+    JobList <AwaitingJobDto> jobs = null;
+    int jobCount = 0;
+
+    if (Storage.HasFeature(JobStorageFeatures.Monitoring.AwaitingJobs))
+    {
+        var monitor = Storage.GetMonitoringApi() as JobStorageMonitor;
+        if (monitor == null) 
+        {
+            throw new NotSupportedException("MonitoringApi should inherit the `JobStorageMonitor` class");
+        }
+
+        pager = new Pager(from, perPage, DashboardOptions.DefaultRecordsPerPage, monitor.AwaitingCount());
+        jobs = monitor.AwaitingJobs(pager.FromRecord, pager.RecordsPerPage);
+        jobCount = jobs.Count;
+    }
+    else
+    {
+        using (var connection = Storage.GetReadOnlyConnection())
+        {
+            var storageConnection = connection as JobStorageConnection;
+
+            if (storageConnection != null)
+            {
+                pager = new Pager(from, perPage, DashboardOptions.DefaultRecordsPerPage, storageConnection.GetSetCount("awaiting"));
+                jobIds = storageConnection.GetRangeFromSet("awaiting", pager.FromRecord, pager.FromRecord + pager.RecordsPerPage - 1);
+                jobCount = jobIds.Count;
+            }
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-md-3">
+        @Html.JobsSidebar()
+    </div>
+    <div class="col-md-9">
+        <h1 id="page-title" class="page-header">@Strings.AwaitingJobsPage_Title</h1>
+
+        @if (jobIds == null && jobs == null)
+        {
+            <div class="alert alert-warning">
+                <h4>@Strings.AwaitingJobsPage_ContinuationsWarning_Title</h4>
+                <p>@Strings.AwaitingJobsPage_ContinuationsWarning_Text</p>
+            </div>
+        }
+        else if (jobCount > 0)
+        {
+            <div class="js-jobs-list">
+                <div class="btn-toolbar btn-toolbar-top">
+                    @if (!IsReadOnly)
+                    {
+                        <button class="js-jobs-list-command btn btn-sm btn-primary"
+                                data-url="@Url.To("/jobs/awaiting/enqueue")"
+                                data-loading-text="@Strings.Common_Enqueueing">
+                            <span class="glyphicon glyphicon-repeat"></span>
+                            @Strings.Common_EnqueueButton_Text
+                        </button>
+                    }
+                    @if (!IsReadOnly)
+                    {
+                        <button class="js-jobs-list-command btn btn-sm btn-default"
+                                data-url="@Url.To("/jobs/awaiting/delete")"
+                                data-loading-text="@Strings.Common_Deleting"
+                                data-confirm="@Strings.Common_DeleteConfirm">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            @Strings.Common_DeleteSelected
+                        </button>
+                    }
+                    @Html.PerPageSelector(pager)
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" aria-describedby="page-title">
+                        <thead>
+                            <tr>
+                                @if (!IsReadOnly)
+                                {
+                                    <th class="min-width">
+                                        <input type="checkbox" class="js-jobs-list-select-all"/>
+                                    </th>
+                                }
+                                <th class="min-width">@Strings.Common_Id</th>
+                                <th>@Strings.Common_Job</th>
+                                <th class="min-width">@Strings.AwaitingJobsPage_Table_Options</th>
+                                <th class="min-width">@Strings.AwaitingJobsPage_Table_Parent</th>
+                                <th class="align-right">@Strings.AwaitingJobsPage_Table_Since</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < jobCount; i++)
+                            {
+                                var jobId = jobIds != null ? jobIds[i] : jobs[i].Key;
+
+                                Job job = null;
+                                bool inAwaitingState = true;
+                                IDictionary<string, string> stateData = null;
+                                string parentStateName = null;
+                                DateTime? awaitingSince = null;
+
+                                if (jobs != null)
+                                {
+                                    if (jobs[i].Value != null)
+                                    {
+                                        job = jobs[i].Value.Job;
+                                        inAwaitingState = jobs[i].Value.InAwaitingState;
+                                        stateData = jobs[i].Value.StateData;
+                                        parentStateName = jobs[i].Value.ParentStateName;
+                                        awaitingSince = jobs[i].Value.AwaitingAt;
+                                    }
+                                }
+                                else
+                                {
+                                    using (var connection = Storage.GetReadOnlyConnection())
+                                    {
+                                        var jobData = connection.GetJobData(jobId);
+                                        var state = connection.GetStateData(jobId);
+                                        inAwaitingState = AwaitingState.StateName.Equals(state?.Name);
+
+                                        if (state != null && inAwaitingState)
+                                        {
+                                            var parentState = connection.GetStateData(state.Data["ParentId"]);
+                                            parentStateName = parentState.Name;
+                                        }
+
+                                        job = jobData.Job;
+                                        stateData = state?.Data;
+                                        awaitingSince = jobData.CreatedAt;
+                                    }
+                                }
+
+                                <tr class="js-jobs-list-row @(job == null || !inAwaitingState ? "obsolete-data" : null) @(job != null && inAwaitingState ? "hover" : null)">
+                                    @if (!IsReadOnly)
+                                    {
+                                        <td>
+                                            @if (job != null && inAwaitingState)
+                                            {
+                                                <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@jobId" />
+                                            }
+                                        </td>
+                                    }
+                                    <td class="min-width">
+                                        @Html.JobIdLink(jobId)
+                                        @if (job != null && !inAwaitingState)
+                                        {
+                                            <span title="@Strings.Common_JobStateChanged_Text" class="glyphicon glyphicon-question-sign"></span>
+                                        }
+                                    </td>
+                                    @if (job == null)
+                                    {
+                                        <td colspan="4"><em>@Strings.Common_JobExpired</em></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="word-break">
+                                            @Html.JobNameLink(jobId, job)
+                                        </td>
+                                        <td class="min-width">
+                                            @if (stateData != null && stateData.ContainsKey("Options") && !String.IsNullOrWhiteSpace(stateData["Options"]))
+                                            {
+                                                var optionsDescription = stateData["Options"];
+                                                if (Enum.TryParse(optionsDescription, out JobContinuationOptions options))
+                                                {
+                                                    optionsDescription = options.ToString("G");
+                                                }
+                                                <code>@optionsDescription</code>
+                                            }
+                                            else
+                                            {
+                                                <em>@Strings.Common_NotAvailable</em>
+                                            }
+                                        </td>
+                                        <td class="min-width">
+                                            @if (parentStateName != null)
+                                            {
+                                                <a href="@Url.JobDetails(stateData["ParentId"])" class="text-decoration-none">
+                                                    @Html.StateLabel(parentStateName, parentStateName, hover: true)
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <em>@Strings.Common_NotAvailable</em>
+                                            }
+                                        </td>
+                                        <td class="min-width align-right">
+                                            @if (awaitingSince.HasValue)
+                                            {
+                                                @Html.RelativeTime(awaitingSince.Value)
+                                            }
+                                            else
+                                            {
+                                                <em>@Strings.Common_NotAvailable</em>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @Html.Paginator(pager)
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                @Strings.AwaitingJobsPage_NoJobs
+            </div>
+        }
+    </div>
+</div>

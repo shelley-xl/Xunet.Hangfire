@@ -1,0 +1,84 @@
+﻿@* Generator: Template TypeVisibility: Internal GeneratePrettyNames: True *@
+@using System
+@using System.Linq
+@using Hangfire.Common
+@using Hangfire.Dashboard
+@using Hangfire.Dashboard.Pages
+@using Hangfire.Dashboard.Resources
+@inherits RazorPage
+@{
+    Layout = new LayoutPage(Strings.ServersPage_Title);
+    
+    var monitor = Storage.GetMonitoringApi();
+    var servers = monitor.Servers();
+    var now = StorageUtcNow ?? ApplicationUtcNow;
+    var inconclusiveThreshold = TimeSpan.FromMinutes(1);
+    var possiblyAbortedThreshold = TimeSpan.FromMinutes(5);
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1 id="page-title" class="page-header">@Strings.ServersPage_Title</h1>
+
+        @if (servers.Count == 0)
+        {
+            <div class="alert alert-warning">
+                @Strings.ServersPage_NoServers
+            </div>
+        }
+        else
+        {
+            if (servers.Any(x => x.Heartbeat.HasValue && x.Heartbeat.Value < now.Add(-possiblyAbortedThreshold)))
+            {
+                <div class="alert alert-info">
+                    <h4>@Strings.ServersPage_Note_Title</h4>
+                    @Html.Raw(string.Format(Strings.ServersPage_Note_Text, Url.To("/jobs/processing")))
+                </div>
+            }
+
+            <div class="table-responsive">
+                <table class="table" aria-describedby="page-title">
+                    <thead>
+                        <tr>
+                            <th>@Strings.ServersPage_Table_Name</th>
+                            <th>@Strings.ServersPage_Table_Workers</th>
+                            <th>@Strings.ServersPage_Table_Queues</th>
+                            <th>@Strings.ServersPage_Table_Started</th>
+                            <th>@Strings.ServersPage_Table_Heartbeat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var server in servers)
+                        {
+                            <tr>
+                                <td>
+                                    @if (server.Heartbeat < now.Add(-possiblyAbortedThreshold))
+                                    {
+                                        @:<span class="glyphicon glyphicon-alert text-danger" title="@Strings.ServersPage_Possibly_Aborted"></span>&nbsp;@Html.ServerId(server.Name)
+                                    }
+                                    else if (server.Heartbeat < now.Add(-inconclusiveThreshold))
+                                    {
+                                        @:<span class="glyphicon margin-right-14p"></span>&nbsp;@Html.ServerId(server.Name)
+                                    }
+                                    else
+                                    {
+                                        @:<span class="glyphicon glyphicon-ok text-success" title="@Strings.ServersPage_Active"></span>&nbsp;@Html.ServerId(server.Name)
+                                    }
+                                </td>
+                                <td>@server.WorkersCount</td>
+                                <td>@Html.Raw(String.Join(", ", server.Queues.Select(Html.QueueLabel)))</td>
+                                <td>@Html.RelativeTime(server.StartedAt)</td>
+                                <td>
+                                    @if (server.Heartbeat.HasValue)
+                                    {
+                                        @Html.RelativeTime(server.Heartbeat.Value)
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

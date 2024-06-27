@@ -1,0 +1,368 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Version -->
+
+	<PropertyGroup>
+		<TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<!-- version numbers will be updated by build -->
+		<Version>1.8.12</Version>
+		<TotalDays>$([System.DateTime]::Now.Date.Subtract($([System.DateTime]::Parse($([System.String]::Format("{0}-1-1",2024))))).TotalDays)</TotalDays>
+		<AssemblyVersion>$(Version).$(TotalDays)</AssemblyVersion>
+		<FileVersion>$(Version).$(TotalDays)</FileVersion>
+		<Authors>徐来</Authors>
+		<Company>徐来</Company>
+		<Title>Xunet.Hangfire</Title>
+		<Product>Xunet.NET</Product>
+		<Description>Timing scheduling library based on hangfire for .NET</Description>
+		<Summary>Timing scheduling library based on hangfire for .NET</Summary>
+		<Copyright>Copyright © 徐来 Xulai 2024</Copyright>
+		<RootNamespace>Xunet.Hangfire</RootNamespace>
+		<AssemblyName>Xunet.Hangfire</AssemblyName>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/shelley-xl/Xunet.Hangfire</RepositoryUrl>
+		<PackageId>Xunet.Hangfire</PackageId>
+		<PackageTags>schedule,hangfire</PackageTags>
+		<PackageIcon>logo.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageProjectUrl>https://github.com/shelley-xl/Xunet.Hangfire</PackageProjectUrl>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>..\build\</OutputPath>
+	</PropertyGroup>
+
+	<!-- PackageReference -->
+
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.1.35" />
+		<PackageReference Include="MoreLinq.Source.MoreEnumerable.Pairwise" Version="1.0.2" />
+		<PackageReference Include="Cronos" Version="0.8.4" />
+		<PackageReference Include="StackTraceFormatter.Source" Version="1.1.0" />
+		<PackageReference Include="StackTraceParser.Source" Version="1.3.1" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+		<PackageReference Include="MySqlConnector" Version="2.3.7" />
+		<PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<!-- Hangfire.Core -->
+
+	<ItemGroup>
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\css\bootstrap.min.css" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\css\Chart.min.css" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\css\hangfire.css" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\css\hangfire-dark.css" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\fonts\glyphicons-halflings-regular.eot" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\fonts\glyphicons-halflings-regular.svg" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\fonts\glyphicons-halflings-regular.ttf" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\fonts\glyphicons-halflings-regular.woff" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\fonts\glyphicons-halflings-regular.woff2" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\js\bootstrap.min.js" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\js\hangfire.js" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\js\jquery-3.7.1.min.js" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\js\moment-with-locales.min.js" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\js\Chart.min.js" />
+		<EmbeddedResource Include="Hangfire.Core\Dashboard\Content\js\chartjs-plugin-streaming.min.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Hangfire.Core\AppBuilderExtensions.cs" />
+		<Compile Remove="Hangfire.Authorization\**" />
+		<Compile Remove="Hangfire.Core\Dashboard/Owin/**" />
+		<Compile Remove="Hangfire.Core\Obsolete/**" />
+		<EmbeddedResource Remove="Hangfire.Authorization\**" />
+		<None Remove="Hangfire.Authorization\**" />
+		<Compile Include="Hangfire.Core\Obsolete/CreateJobFailedException.cs" />
+		<Compile Include="Hangfire.Core\Obsolete/IServerComponent.cs" />
+		<Compile Include="Hangfire.Core\Obsolete/IServerProcess.cs" />
+		<Compile Include="Hangfire.Core\Obsolete/Job.Obsolete.cs" />
+		<Compile Include="Hangfire.Core\Obsolete/ServerWatchdogOptions.cs" />
+		<Compile Include="Hangfire.Core\Obsolete/StateContext.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Hangfire.Core\Dashboard\Content\resx\Strings.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+			<CustomToolNamespace>Hangfire.Dashboard.Resources</CustomToolNamespace>
+		</EmbeddedResource>
+		<Compile Update="Hangfire.Core\Dashboard\Content\resx\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\LayoutPage.generated.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>LayoutPage.cshtml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_BlockMetric.cshtml.cs">
+			<DependentUpon>_BlockMetric.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_BlockMetric.cs">
+			<DependentUpon>_BlockMetric.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_Breadcrumbs.cshtml.cs">
+			<DependentUpon>_Breadcrumbs.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_Breadcrumbs.cs">
+			<DependentUpon>_Breadcrumbs.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_ErrorAlert.cshtml.cs">
+			<DependentUpon>_ErrorAlert.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_InlineMetric.cshtml.cs">
+			<DependentUpon>_InlineMetric.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_InlineMetric.cs">
+			<DependentUpon>_InlineMetric.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_Navigation.cshtml.cs">
+			<DependentUpon>_Navigation.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_Paginator.cshtml.cs">
+			<DependentUpon>_Paginator.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_Paginator.cs">
+			<DependentUpon>_Paginator.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_PerPageSelector.cshtml.cs">
+			<DependentUpon>_PerPageSelector.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_PerPageSelector.cs">
+			<DependentUpon>_PerPageSelector.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_SidebarMenu.cshtml.cs">
+			<DependentUpon>_SidebarMenu.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\_SidebarMenu.cs">
+			<DependentUpon>_SidebarMenu.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\AwaitingJobsPage.cshtml.cs">
+			<DependentUpon>AwaitingJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\DeletedJobsPage.cshtml.cs">
+			<DependentUpon>DeletedJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\EnqueuedJobsPage.cshtml.cs">
+			<DependentUpon>EnqueuedJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\EnqueuedJobsPage.cs">
+			<DependentUpon>EnqueuedJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\FailedJobsPage.cshtml.cs">
+			<DependentUpon>FailedJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\FetchedJobsPage.cshtml.cs">
+			<DependentUpon>FetchedJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\FetchedJobsPage.cs">
+			<DependentUpon>FetchedJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\HomePage.cshtml.cs">
+			<DependentUpon>HomePage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\HomePage.cs">
+			<DependentUpon>HomePage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\JobDetailsPage.cshtml.cs">
+			<DependentUpon>JobDetailsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\JobDetailsPage.cs">
+			<DependentUpon>JobDetailsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\LayoutPage.cs">
+			<DependentUpon>LayoutPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\ProcessingJobsPage.cshtml.cs">
+			<DependentUpon>ProcessingJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\QueuesPage.cshtml.cs">
+			<DependentUpon>QueuesPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\RecurringJobsPage.cshtml.cs">
+			<DependentUpon>RecurringJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\RetriesPage.cshtml.cs">
+			<DependentUpon>RetriesPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\ScheduledJobsPage.cshtml.cs">
+			<DependentUpon>ScheduledJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\ServersPage.cshtml.cs">
+			<DependentUpon>ServersPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Core\Dashboard\Pages\SucceededJobs.cshtml.cs">
+			<DependentUpon>SucceededJobs.cshtml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Hangfire.Core\Dashboard\Pages\LayoutPage.cshtml">
+			<Generator>RazorGenerator</Generator>
+			<LastGenOutput>LayoutPage.generated.cs</LastGenOutput>
+			<CustomToolNamespace>Hangfire.Dashboard.Pages</CustomToolNamespace>
+		</None>
+	</ItemGroup>
+
+	<!-- Hangfire.MySql -->
+
+	<ItemGroup>
+		<None Remove="Hangfire.MySql\Install.sql" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Hangfire.MySql\Install.sql" />
+	</ItemGroup>
+
+	<!-- Hangfire.Console -->
+
+	<ItemGroup>
+		<EmbeddedResource Include="Hangfire.Console\Resources\*" />
+	</ItemGroup>
+
+	<!-- Hangfire.Heartbeat -->
+
+	<ItemGroup>
+		<None Remove="Hangfire.Heartbeat\Dashboard\css\styles.css" />
+		<None Remove="Hangfire.Heartbeat\Dashboard\html\OverviewPage.html" />
+		<None Remove="Hangfire.Heartbeat\Dashboard\js\knockout-3.4.2.js" />
+		<None Remove="Hangfire.Heartbeat\Dashboard\js\knockout.bindings.orderable.js" />
+		<None Remove="Hangfire.Heartbeat\Dashboard\js\numeral.min.js" />
+		<None Remove="Hangfire.Heartbeat\Dashboard\js\OverviewPage.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Hangfire.Heartbeat\Dashboard\css\styles.css" />
+		<EmbeddedResource Include="Hangfire.Heartbeat\Dashboard\html\OverviewPage.html" />
+		<EmbeddedResource Include="Hangfire.Heartbeat\Dashboard\js\knockout-3.4.2.js" />
+		<EmbeddedResource Include="Hangfire.Heartbeat\Dashboard\js\knockout.bindings.orderable.js" />
+		<EmbeddedResource Include="Hangfire.Heartbeat\Dashboard\js\numeral.min.js" />
+		<EmbeddedResource Include="Hangfire.Heartbeat\Dashboard\js\OverviewPage.js" />
+	</ItemGroup>
+
+	<!-- Hangfire.Tags -->
+
+	<ItemGroup>
+		<None Remove="Hangfire.Tags\Resources\jquery.tagcloud.js" />
+		<None Remove="Hangfire.Tags\Resources\script.js" />
+		<None Remove="Hangfire.Tags\Resources\style.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Hangfire.Tags\Resources\jquery.tagcloud.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Hangfire.Tags\Resources\script.js" />
+		<EmbeddedResource Include="Hangfire.Tags\Resources\style.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Hangfire.Tags\Dashboard\Pages\TagsJobsPage.generated.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>TagsJobsPage.cshtml</DependentUpon>
+		</Compile>
+		<Compile Update="Hangfire.Tags\Dashboard\Pages\TagsSearchPage.generated.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>TagsSearchPage.cshtml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Hangfire.Tags\Dashboard\Pages\TagsJobsPage.cshtml">
+			<LastGenOutput>TagsJobsPage.generated.cs</LastGenOutput>
+			<Generator>RazorGenerator</Generator>
+			<CustomToolNamespace>Hangfire.Tags.Dashboard.Pages</CustomToolNamespace>
+		</None>
+		<None Update="Hangfire.Tags\Dashboard\Pages\TagsSearchPage.cshtml">
+			<Generator>RazorGenerator</Generator>
+			<LastGenOutput>TagsSearchPage.generated.cs</LastGenOutput>
+			<CustomToolNamespace>Hangfire.Tags.Dashboard.Pages</CustomToolNamespace>
+		</None>
+	</ItemGroup>
+
+	<!-- Hangfire.RecurringJobAdmin -->
+
+	<ItemGroup>
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\css\cron-expression-input.css" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\css\JobExtension.css" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\axios.min.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\cron-expression-input.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\daysjs.min.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\jobextension.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\relativeTime.min.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\sweetalert.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\vue.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\Content\js\vuejs-paginate.js" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\JobExtension.html" />
+		<None Remove="Hangfire.RecurringJobAdmin\Dashboard\JobsStopped.html" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\css\cron-expression-input.css">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\css\JobExtension.css">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\axios.min.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\cron-expression-input.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\relativeTime.min.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\jobextension.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\daysjs.min.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\sweetalert.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\vuejs-paginate.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\Content\js\vue.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\JobsStopped.html" />
+		<EmbeddedResource Include="Hangfire.RecurringJobAdmin\Dashboard\JobExtension.html" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\logo.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+</Project>
