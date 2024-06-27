@@ -11,7 +11,7 @@ Support .NET 6.0/7.0/8.0
 
 ## 安装
 
-使用NuGet Package
+Install-Package
 
 ```
 PM> Install-Package Xunet.Hangfire
