@@ -11,7 +11,7 @@ Support .NET 6.0/7.0/8.0
 
 ## 安装
 
-使用NuGet Package 控制台窗口安装它：
+Xunet.Hangfire 以 NuGet 包的形式提供。您可以使用 NuGet 包控制台窗口安装它：
 
 ```
 PM> Install-Package Xunet.Hangfire
@@ -22,16 +22,24 @@ PM> Install-Package Xunet.Hangfire
 Program.cs
 
 ```c#
+using Hangfire;
+using Hangfire.MySql;
+using Hangfire.Console;
+using Hangfire.Heartbeat;
+using Hangfire.Tags.MySql;
+using Hangfire.RecurringJobAdmin;
+using Hangfire.Heartbeat.Server;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-if (connectionString == null) throw new ArgumentNullException(nameof(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentException("connectionString");
 
 var sqlOptions = new MySqlStorageOptions()
 {
     TablesPrefix = "Hangfire_"
 };
+
 var storage = new MySqlStorage(connectionString, sqlOptions);
 
 builder.Services.AddHangfire((a, x) =>
@@ -57,7 +65,6 @@ var app = builder.Build();
 
 app.MapHangfireDashboard(string.Empty, new DashboardOptions
 {
-    IsReadOnlyFunc = _ => false,
     DashboardTitle = "定时任务"
 });
 
@@ -86,3 +93,56 @@ appsettings.json
   }
 }
 ```
+
+WorkService.cs
+
+```c#
+public class WorkService(IPerformContextAccessor context)
+{
+    readonly IPerformContextAccessor _context = context;
+
+    PerformContext Context => _context.PerformingContext;
+
+    [Tag("工作标签")]
+    [Queue("default")]
+    [JobDisplayName("工作作业")]
+    [AutomaticRetry(Attempts = 3, DelaysInSeconds = [15, 30, 60])]
+    [RecurringJob("1000", "0 10 * * *", "China Standard Time", "default")]
+    public void DoWork()
+    {
+        Context.WriteLine("work执行开始");
+
+        Thread.Sleep(3000);
+
+        Context.WriteLine("work执行结束");
+    }
+}
+```
+
+## 特性
+
+- 定时作业基础功能：队列作业、延期作业、周期作业
+
+- 服务器心跳检测：显示服务运行状态，包括CPU、内存等
+
+- 作业管理功能：添加作业、编辑作业、停止/运行作业
+
+- 数据持久化存储：采用MySqlStorage
+
+- 作业打标签功能：可对作业进行分类、分组管理
+
+- 作业筛选功能：可根据作业编号、名称对作业进行筛选
+
+## 感谢
+
+- [Hangfire](https://github.com/HangfireIO/Hangfire)
+
+- [Hangfire.Console](https://github.com/pieceofsummer/Hangfire.Console)
+
+- [Hangfire.Heartbeat](https://github.com/ahydrax/Hangfire.Heartbeat)
+
+- [Hangfire.MySqlStorage](https://github.com/arnoldasgudas/Hangfire.MySqlStorage)
+
+- [Hangfire.RecurringJobAdmin](https://github.com/bamotav/Hangfire.RecurringJobAdmin)
+
+- [Hangfire.Tags](https://github.com/face-it/Hangfire.Tags)
