@@ -129,7 +129,7 @@ public class WorkService(IPerformContextAccessor context)
 
 - 作业管理功能：添加作业、编辑作业、停止/运行作业
 
-- 作业打标签功能：可对作业进行分类、分组管理
+- 作业标签功能：可对作业进行分类、分组管理
 
 - 作业筛选功能：可根据作业编号、名称对作业进行筛选
 
