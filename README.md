@@ -125,9 +125,9 @@ public class WorkService(IPerformContextAccessor context)
 
 - 服务器心跳检测：显示服务运行状态，包括CPU、内存等
 
-- 作业管理功能：添加作业、编辑作业、停止/运行作业
-
 - 数据持久化存储：采用MySqlStorage
+
+- 作业管理功能：添加作业、编辑作业、停止/运行作业
 
 - 作业打标签功能：可对作业进行分类、分组管理
 
@@ -146,3 +146,5 @@ public class WorkService(IPerformContextAccessor context)
 - [Hangfire.RecurringJobAdmin](https://github.com/bamotav/Hangfire.RecurringJobAdmin)
 
 - [Hangfire.Tags](https://github.com/face-it/Hangfire.Tags)
+
+- [Hangfire.PerformContextAccessor](https://github.com/meriturva/Hangfire.PerformContextAccessor)
